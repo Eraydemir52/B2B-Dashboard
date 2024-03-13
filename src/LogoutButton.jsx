@@ -5,23 +5,23 @@ import { useNavigate } from "react-router-dom";
 const LogoutButton = ({ onLogout }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Çıkış işlemlerini gerçekleştir
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("username");
+    console.log("Çıkış yapıldı ");
 
     // Çıkış başarılı olduğunda onLogout prop'u aracılığıyla işlemi gerçekleştir
-    onLogout();
+    await onLogout();
 
     // Ana sayfaya yönlendir
-    navigate("");
+    navigate("/");
+
+    // Sayfayı yenile (sayfa yönlendirme işlemi gerçekleştikten sonra)
+    window.location.reload();
   };
 
-  return (
-    <button onClick={handleLogout} href="http://localhost:5173/">
-      Çıkış Yap
-    </button>
-  );
+  return <button onClick={handleLogout}>Çıkış Yap</button>;
 };
 
 export default LogoutButton;

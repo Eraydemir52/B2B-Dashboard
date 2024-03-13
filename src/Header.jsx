@@ -10,53 +10,33 @@ import {
 import CartMenu from "./CartMenu";
 import LogoutButton from "./LogoutButton";
 
-function Header({ OpenSidebar, cartState }) {
-  const [isCartMenuOpen, setIsCartMenuOpen] = useState(false);
-  const cartRef = useRef(null);
+function Header({ OpenSidebar, cartState, aramaInput, setAramaInput }) {
+  const [sepetMenuAcik, setSepetMenuAcik] = useState(false);
+  const sepetRef = useRef(null);
+  const [inputAcik, setInputAcik] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      // Çıkış işlemlerini gerçekleştir
-      console.log("Çıkış işlemi gerçekleşti");
-
-      // HTTP isteği gönder
-      const response = await fetch("http://localhost:5173/", {
-        method: "GET", // veya "POST" vb.
-        headers: {
-          // İsteğe özel başlıkları ekleyebilirsiniz
-          "Content-Type": "application/json",
-          // Diğer gerekli başlıkları da ekleyebilirsiniz
-        },
-        // Ekstra seçenekleri burada belirleyebilirsiniz
-      });
-
-      // İsteğin başarılı olup olmadığını kontrol et
-      if (response.ok) {
-        console.log("İstek başarılı");
-        // İstek başarılıysa sayfayı yeniden yükle
-        window.location.reload();
-      } else {
-        console.error("İstek başarısız");
-      }
-    } catch (error) {
-      console.error("Bir hata oluştu", error);
-    }
+  const cikisYap = async () => {
+    // Çıkış işlemleri
   };
 
-  const toggleCartMenu = () => {
-    setIsCartMenuOpen(!isCartMenuOpen);
+  const iconaTikla = () => {
+    setInputAcik(!inputAcik);
   };
 
-  const closeCartMenu = (event) => {
-    if (cartRef.current && !cartRef.current.contains(event.target)) {
-      setIsCartMenuOpen(false);
+  const sepetMenuToggle = () => {
+    setSepetMenuAcik(!sepetMenuAcik);
+  };
+
+  const sepetMenuKapat = (event) => {
+    if (sepetRef.current && !sepetRef.current.contains(event.target)) {
+      setSepetMenuAcik(false);
     }
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", closeCartMenu);
+    document.addEventListener("mousedown", sepetMenuKapat);
     return () => {
-      document.removeEventListener("mousedown", closeCartMenu);
+      document.removeEventListener("mousedown", sepetMenuKapat);
     };
   }, []);
 
@@ -65,12 +45,21 @@ function Header({ OpenSidebar, cartState }) {
       <div className="menu-icon">
         <BsJustify className="icon" onClick={OpenSidebar} />
       </div>
-      <div className="header-left">
-        <BsSearch className="icon" />
+      <div className="icon" onClick={iconaTikla}>
+        <BsSearch />
       </div>
+      {inputAcik && (
+        <input
+          type="text"
+          placeholder="Ürün arama"
+          className="inputSearch"
+          value={aramaInput}
+          onChange={(e) => setAramaInput(e.target.value)}
+        />
+      )}
       <div className="header-right">
         <div className="header-link">
-          <a className="cart-icon-container" onClick={toggleCartMenu}>
+          <a className="cart-icon-container" onClick={sepetMenuToggle}>
             {cartState && Array.isArray(cartState) && cartState.length > 0 && (
               <span className="cart-count">{cartState.length}</span>
             )}
@@ -82,15 +71,15 @@ function Header({ OpenSidebar, cartState }) {
           <div className="header-link">
             <BsPersonCircle className="icon icon-space" />
             <div>
-              <LogoutButton onLogout={handleLogout} />
+              <LogoutButton onLogout={cikisYap} />
             </div>
           </div>
         </div>
-        {isCartMenuOpen && (
-          <div ref={cartRef} className="cart-menu">
+        {sepetMenuAcik && (
+          <div ref={sepetRef} className="cart-menu">
             <CartMenu
               cartItems={cartState}
-              closeCartMenu={() => setIsCartMenuOpen(false)}
+              closeCartMenu={() => setSepetMenuAcik(false)}
             />
           </div>
         )}

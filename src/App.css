@@ -46,6 +46,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 30px 0 30px;
+
   box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
   /* position: relative;
   top: -40px;  */
@@ -411,4 +412,13 @@ body {
 }
 .viewProductBtn button {
   margin-right: 10px; /* Sağa  10 piksel margin bırakır, bu değeri ihtiyacınıza göre ayarlayabilirsiniz */
+}
+
+.inputSearch {
+  width: 50%; /* Sayfa genişliğine göre yüzde cinsinden genişlik */
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-top: 12px;
+  border-radius: 20px; /* Kenarlık radius'u */
+  font-size: 14px; /* İstediğiniz font büyüklüğü */
 }

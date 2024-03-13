@@ -1,3 +1,4 @@
+// Home.jsx
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Modal from "react-modal";
@@ -16,6 +17,7 @@ function Home() {
   const [cart, setCart] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [aramaInput, setAramaInput] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -35,20 +37,18 @@ function Home() {
     const productIndex = cart.findIndex((item) => item.id === productId);
 
     if (productIndex !== -1) {
-      // Ürün zaten sepette var, sayısını artır
       const updatedCart = cart.map((item) =>
         item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCart(updatedCart);
     } else {
-      // Ürün sepette yok, yeni olarak ekle
       const product = data.find((item) => item.urunID === productId);
       if (product) {
         const newCartItem = {
           id: product.urunID,
           name: product.baslik,
           price: product.fiyat,
-          quantity: 1, // Yeni eklenen ürünün sayısı 1 olarak başlar
+          quantity: 1,
         };
         setCart([...cart, newCartItem]);
         console.log(`Ürün ID ${productId} sepete eklendi.`);
@@ -69,91 +69,98 @@ function Home() {
 
   return (
     <main className="main-container">
-      <Header OpenSidebar={() => {}} cartState={cart} />
+      <Header
+        OpenSidebar={() => {}}
+        cartState={cart}
+        aramaInput={aramaInput}
+        setAramaInput={setAramaInput}
+      />
       <div className="main-title">
         <h3>DASHBOARD</h3>
       </div>
       <div className="main-cards">
         <div className="card">
           <div className="card-inner">
-            <h3>PRODUCTS</h3>
+            <h3>ÜRÜNLER</h3>
             <BsFillArchiveFill className="card_icon" />
           </div>
           <h1>300</h1>
         </div>
         <div className="card">
           <div className="card-inner">
-            <h3>CATEGORIES</h3>
+            <h3>KATEGORİLER</h3>
             <BsFillGrid3X3GapFill className="card_icon" />
           </div>
           <h1>12</h1>
         </div>
         <div className="card">
           <div className="card-inner">
-            <h3> CUSTOMERS </h3>
+            <h3> MÜŞTERİLER </h3>
             <BsPeopleFill className="card_icon" />
           </div>
           <h1>33</h1>
         </div>
         <div className="card">
           <div className="card-inner">
-            <h3>ALERTS</h3>
+            <h3>UYARILAR</h3>
             <BsFillBellFill className="card_icon" />
           </div>
           <h1>42</h1>
         </div>
       </div>
-      User
       <div className="table-container">
-        {/* Table */}
         <table className="custom-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Title</th>
-              <th>Content</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>Başlık</th>
+              <th>İçerik</th>
+              <th>Fiyat</th>
+              <th>Durum</th>
+              <th>İşlem</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((item) => (
-              <tr key={item.urunID}>
-                <td>{item.urunID}</td>
-                <td>{item.baslik}</td>
-                <td>{item.icerik}</td>
-                <td>{item.fiyat}</td>
-                <td>{item.urundurum}</td>
-                <td>
-                  <div className="viewProductBtn">
-                    <button
-                      className="addToCartBtn"
-                      onClick={() => addToCart(item.urunID)}
-                    >
-                      Sepete Ekle
-                    </button>
-                    <button
-                      className="imageBtn"
-                      onClick={() => openModal(item.urunID)}
-                    >
-                      <BsEye size={20} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {data
+              .filter((item) =>
+                item.baslik.toLowerCase().includes(aramaInput.toLowerCase())
+              )
+              .map((item) => (
+                <tr key={item.urunID}>
+                  <td>{item.urunID}</td>
+                  <td>{item.baslik}</td>
+                  <td>{item.icerik}</td>
+                  <td>{item.fiyat}</td>
+                  <td>{item.urundurum}</td>
+                  <td>
+                    <div className="viewProductBtn">
+                      <button
+                        className="addToCartBtn"
+                        onClick={() => addToCart(item.urunID)}
+                      >
+                        Sepete Ekle
+                      </button>
+                      <button
+                        className="imageBtn"
+                        onClick={() => openModal(item.urunID)}
+                      >
+                        <BsEye size={20} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         <Modal
           isOpen={isModalOpen}
           onRequestClose={closeModal}
-          contentLabel="Product Image Modal"
+          contentLabel="Ürün Görseli Modal"
         >
           {selectedProduct && (
             <>
               <h3>{selectedProduct.baslik}</h3>
-              <img src={selectedProduct.kapakresim} alt="Product Image" />
+              <img src={selectedProduct.kapakresim} alt="Ürün Görseli" />
             </>
           )}
 
