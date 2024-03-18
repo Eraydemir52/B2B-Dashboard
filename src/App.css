@@ -422,3 +422,26 @@ body {
   border-radius: 20px; /* Kenarlık radius'u */
   font-size: 14px; /* İstediğiniz font büyüklüğü */
 }
+
+/* Form konteyneri için ekstra stil */
+
+/* Form konteyneri için ekstra stil */
+
+/* Form konteyneri için ekstra stil */
+.form-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 20px;
+  background-color: #1d2634;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+.buttonpassword {
+  display: block;
+  margin: 0 auto; /* Dikey hizalamayı sağlar */
+  /* Yatay hizalamayı sağlamak için gereken diğer stiller buraya eklenebilir */
+}

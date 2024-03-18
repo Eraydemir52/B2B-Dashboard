@@ -1,4 +1,3 @@
-// Header.jsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   BsCart3,
@@ -7,6 +6,7 @@ import {
   BsSearch,
   BsJustify,
 } from "react-icons/bs";
+import { Link } from "react-router-dom"; // react-router-dom'dan Link bileşenini içe aktarın
 import CartMenu from "./CartMenu";
 import LogoutButton from "./LogoutButton";
 
@@ -69,7 +69,17 @@ function Header({ OpenSidebar, cartState, aramaInput, setAramaInput }) {
             <BsFillEnvelopeFill className="icon icon-space" />
           </a>
           <div className="header-link">
-            <BsPersonCircle className="icon icon-space" />
+            {/* Link bileşeniyle profil sayfasına yönlendirme */}
+            <Link
+              to="/change-password"
+              style={{
+                color: "rgba(255, 255, 255, 0.95)",
+                textDecoration: "none",
+              }}
+            >
+              <BsPersonCircle className="icon icon-space" />
+            </Link>
+
             <div>
               <LogoutButton onLogout={cikisYap} />
             </div>

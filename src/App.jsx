@@ -6,6 +6,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Home from "./Home";
 import Login from "./Login";
+import ChangePasswordForm from "./ChangePasswordForm";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,7 +34,18 @@ function App() {
               openSidebarToggle={openSidebarToggle}
               OpenSidebar={OpenSidebar}
             />
-            <Home />
+
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/change-password"
+                element={
+                  <div className="form-container">
+                    <ChangePasswordForm />
+                  </div>
+                }
+              />
+            </Routes>
           </div>
         ) : (
           <Login onLoginSuccess={handleLoginSuccess} />
