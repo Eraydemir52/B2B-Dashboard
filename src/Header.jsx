@@ -6,7 +6,7 @@ import {
   BsSearch,
   BsJustify,
 } from "react-icons/bs";
-import { Link } from "react-router-dom"; // react-router-dom'dan Link bileşenini içe aktarın
+import { Link, useNavigate } from "react-router-dom"; // react-router-dom'dan Link ve useNavigate bileşenlerini içe aktarın
 import CartMenu from "./CartMenu";
 import LogoutButton from "./LogoutButton";
 
@@ -14,6 +14,9 @@ function Header({ OpenSidebar, cartState, aramaInput, setAramaInput }) {
   const [sepetMenuAcik, setSepetMenuAcik] = useState(false);
   const sepetRef = useRef(null);
   const [inputAcik, setInputAcik] = useState(false);
+  const [showAdminButton, setShowAdminButton] = useState(false); // Buttonun görünürlüğünü kontrol etmek için state
+
+  const navigate = useNavigate(); // useNavigate hook'unu kullanarak navigate fonksiyonunu alın
 
   const cikisYap = async () => {
     // Çıkış işlemleri
@@ -39,6 +42,43 @@ function Header({ OpenSidebar, cartState, aramaInput, setAramaInput }) {
       document.removeEventListener("mousedown", sepetMenuKapat);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const username = localStorage.getItem("username");
+        const response = await fetch(
+          `https://localhost:44343/api/User/${username}`
+        );
+        const userData = await response.json();
+
+        // Kullanıcının roleID'sine göre buttonun görünürlüğünü ayarla
+        setShowAdminButton(userData.roleID === 1);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchData(); // fetchData fonksiyonunu çalıştır
+  }, []);
+
+  const handleAdminClick = async () => {
+    try {
+      const username = localStorage.getItem("username");
+      const response = await fetch(
+        `https://localhost:44343/api/User/${username}`
+      );
+      const userData = await response.json();
+
+      if (userData.roleID === 1) {
+        navigate("/admin"); // Admin sayfasına yönlendirme
+      } else {
+        alert("Bu işlem için yetkiniz yok!"); // Uyarı verme
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <header className="header">
@@ -79,7 +119,11 @@ function Header({ OpenSidebar, cartState, aramaInput, setAramaInput }) {
             >
               <BsPersonCircle className="icon icon-space" />
             </Link>
-
+            {showAdminButton && (
+              <button onClick={handleAdminClick} className="btn-admin">
+                Admin
+              </button>
+            )}
             <div>
               <LogoutButton onLogout={cikisYap} />
             </div>

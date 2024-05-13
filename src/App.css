@@ -445,3 +445,6 @@ body {
   margin: 0 auto; /* Dikey hizalamayı sağlar */
   /* Yatay hizalamayı sağlamak için gereken diğer stiller buraya eklenebilir */
 }
+.btn-admin {
+  margin-right: 10px;
+}

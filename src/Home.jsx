@@ -1,4 +1,3 @@
-// Home.jsx
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Modal from "react-modal";
@@ -18,10 +17,24 @@ function Home() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aramaInput, setAramaInput] = useState("");
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    fetchData();
+    const savedUsername = localStorage.getItem("username");
+    if (savedUsername) {
+      setUsername(savedUsername);
+    } else {
+      // Default username or login mechanism if not found in local storage
+      setUsername("testuser");
+    }
   }, []);
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem(`cart_${username}`);
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, [username]);
 
   const fetchData = async () => {
     try {
@@ -33,6 +46,10 @@ function Home() {
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const addToCart = (productId) => {
     const productIndex = cart.findIndex((item) => item.id === productId);
 
@@ -41,6 +58,8 @@ function Home() {
         item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCart(updatedCart);
+      // Local storage güncelle
+      localStorage.setItem(`cart_${username}`, JSON.stringify(updatedCart));
     } else {
       const product = data.find((item) => item.urunID === productId);
       if (product) {
@@ -50,8 +69,12 @@ function Home() {
           price: product.fiyat,
           quantity: 1,
         };
-        setCart([...cart, newCartItem]);
+        const updatedCart = [...cart, newCartItem];
+        setCart(updatedCart);
         console.log(`Ürün ID ${productId} sepete eklendi.`);
+
+        // Local storage güncelle
+        localStorage.setItem(`cart_${username}`, JSON.stringify(updatedCart));
       }
     }
   };
@@ -66,7 +89,6 @@ function Home() {
     setSelectedProduct(null);
     setIsModalOpen(false);
   };
-
   return (
     <main className="main-container">
       <Header

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   BsCart3,
   BsGrid1X2Fill,
@@ -8,6 +9,8 @@ import {
   BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
+  BsFillCreditCard2BackFill,
+  BsFillBasket2Fill,
 } from "react-icons/bs";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
@@ -27,39 +30,41 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
       <ul className="sidebar-list">
         <li className="sidebar-list-item">
-          <a href="http://localhost:5173/">
+          <Link to="/">
             <BsGrid1X2Fill className="icon" /> Dashboard
-          </a>
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
-            <BsFillArchiveFill className="icon" /> Products
-          </a>
+          <Link to="/cart">
+            <BsFillBasket2Fill className="icon" /> Sepet
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
+          <Link to="/payment">
+            <BsFillCreditCard2BackFill className="icon" /> Ödeme
+          </Link>
+        </li>
+
+        <li className="sidebar-list-item">
+          <Link to="/categories">
             <BsFillGrid3X3GapFill className="icon" /> Categories
-          </a>
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
+          <Link to="/customers">
             <BsPeopleFill className="icon" /> Customers
-          </a>
+          </Link>
         </li>
+
         <li className="sidebar-list-item">
-          <a href="">
-            <BsListCheck className="icon" /> Inventory
-          </a>
-        </li>
-        <li className="sidebar-list-item">
-          <a href="">
+          <Link to="/reports">
             <BsMenuButtonWideFill className="icon" /> Reports
-          </a>
+          </Link>
         </li>
         <li className="sidebar-list-item">
-          <a href="">
+          <Link to="/settings">
             <BsFillGearFill className="icon" /> Setting
-          </a>
+          </Link>
         </li>
       </ul>
     </aside>

@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -7,11 +6,15 @@ import Sidebar from "./Sidebar";
 import Home from "./Home";
 import Login from "./Login";
 import ChangePasswordForm from "./ChangePasswordForm";
+import Admin from "./Admin"; // Admin bileşenini import et
+import Payment from "./Payment";
+import Cart from "./Cart"; // Cart bileşenini import et
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [shouldRenderComponents, setShouldRenderComponents] = useState(false);
+  const [cart, setCart] = useState([]); // Cart state'ini tanımla
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
@@ -32,7 +35,7 @@ function App() {
           <div className="grid-container">
             <Sidebar
               openSidebarToggle={openSidebarToggle}
-              OpenSidebar={OpenSidebar}
+              OpenSidebar={OpenSidebar} // OpenSidebar fonksiyonunu Sidebar bileşenine prop olarak geçir
             />
 
             <Routes>
@@ -45,6 +48,12 @@ function App() {
                   </div>
                 }
               />
+              <Route
+                path="/payment"
+                element={<Payment cartItems={cart} />} // Ödeme bileşenini buraya ekleyin
+              />
+              <Route path="/Admin" element={<Admin />} />
+              <Route path="/Cart" element={<Cart cartItems={cart} />} />
             </Routes>
           </div>
         ) : (
