@@ -18,13 +18,14 @@ function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aramaInput, setAramaInput] = useState("");
   const [username, setUsername] = useState("");
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [categoryCount, setCategoryCount] = useState(0);
 
   useEffect(() => {
     const savedUsername = localStorage.getItem("username");
     if (savedUsername) {
       setUsername(savedUsername);
     } else {
-      // Default username or login mechanism if not found in local storage
       setUsername("testuser");
     }
   }, []);
@@ -36,18 +37,38 @@ function Home() {
     }
   }, [username]);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("https://localhost:44343/api/urun/witurun");
-      const result = await response.json();
-      setData(result);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    const savedTotalPrices =
+      JSON.parse(localStorage.getItem("totalPrices")) || {};
+    const userTotalPrice = savedTotalPrices[username] || 0;
+    setTotalPrice(userTotalPrice);
+  }, [username]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://localhost:44343/api/urun/witurun"
+        );
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
     fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchCategoryCount = async () => {
+      try {
+        const response = await fetch("https://localhost:44343/api/kategori");
+        const result = await response.json();
+        setCategoryCount(result.length); // Update category count
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCategoryCount();
   }, []);
 
   const addToCart = (productId) => {
@@ -58,7 +79,6 @@ function Home() {
         item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCart(updatedCart);
-      // Local storage güncelle
       localStorage.setItem(`cart_${username}`, JSON.stringify(updatedCart));
     } else {
       const product = data.find((item) => item.urunID === productId);
@@ -71,9 +91,6 @@ function Home() {
         };
         const updatedCart = [...cart, newCartItem];
         setCart(updatedCart);
-        console.log(`Ürün ID ${productId} sepete eklendi.`);
-
-        // Local storage güncelle
         localStorage.setItem(`cart_${username}`, JSON.stringify(updatedCart));
       }
     }
@@ -89,6 +106,7 @@ function Home() {
     setSelectedProduct(null);
     setIsModalOpen(false);
   };
+
   return (
     <main className="main-container">
       <Header
@@ -106,28 +124,28 @@ function Home() {
             <h3>ÜRÜNLER</h3>
             <BsFillArchiveFill className="card_icon" />
           </div>
-          <h1>300</h1>
+          <h1>{data.length}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3>KATEGORİLER</h3>
             <BsFillGrid3X3GapFill className="card_icon" />
           </div>
-          <h1>12</h1>
+          <h1>{categoryCount}</h1>
         </div>
         <div className="card">
           <div className="card-inner">
             <h3> MÜŞTERİLER </h3>
-            <BsPeopleFill className="card_icon" />
+            <BsFillBellFill className="card_icon" />
           </div>
           <h1>33</h1>
         </div>
         <div className="card">
           <div className="card-inner">
-            <h3>UYARILAR</h3>
-            <BsFillBellFill className="card_icon" />
+            <h3>Bakiye</h3>
+            <BsPeopleFill className="card_icon" />
           </div>
-          <h1>42</h1>
+          <h1>{totalPrice} TL</h1>
         </div>
       </div>
       <div className="table-container">
@@ -136,6 +154,7 @@ function Home() {
             <tr>
               <th>ID</th>
               <th>Başlık</th>
+              <th>Kategori</th>
               <th>İçerik</th>
               <th>Fiyat</th>
               <th>Durum</th>
@@ -151,6 +170,7 @@ function Home() {
                 <tr key={item.urunID}>
                   <td>{item.urunID}</td>
                   <td>{item.baslik}</td>
+                  <td>{item.kategoriBaslik}</td>
                   <td>{item.icerik}</td>
                   <td>{item.fiyat}</td>
                   <td>{item.urundurum}</td>

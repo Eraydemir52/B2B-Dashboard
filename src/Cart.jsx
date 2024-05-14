@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [username, setUsername] = useState("");
+  const [totalPrice, setTotalPrice] = useState(0); // Toplam fiyat için state ekle
 
   useEffect(() => {
     // Kullanıcı adını local storage'dan al
@@ -16,14 +17,44 @@ const Cart = () => {
       );
       if (userCart) {
         setCartItems(userCart);
+
+        // Toplam fiyatı hesapla
+        const total = userCart.reduce(
+          (acc, item) => acc + item.quantity * item.price,
+          0
+        );
+        setTotalPrice(total);
       }
     }
   }, []);
 
   const handleSendOrder = () => {
-    // Sepet ve kullanıcı adını local storage'a kaydet
-    localStorage.setItem(`cart_${username}`, JSON.stringify(cartItems));
-    localStorage.setItem("order_username", username);
+    // Sipariş verilerini oluştur
+    const orderData = {
+      cartItems: cartItems,
+      username: username,
+      orderDate: new Date().toLocaleDateString(),
+      totalPrice: totalPrice, // Toplam fiyatı sipariş verilerine ekle
+    };
+
+    // Siparişi local storage'a kaydet
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    orders.push(orderData);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    // Sepeti temizle
+    setCartItems([]);
+    localStorage.removeItem(`cart_${username}`);
+    localStorage.removeItem("order_username");
+
+    // Mevcut totalPrices değerini al ve totalPrice değerini ekle
+    const totalPrices = JSON.parse(localStorage.getItem("totalPrices")) || {};
+    totalPrices[username] = (totalPrices[username] || 0) + totalPrice;
+    localStorage.setItem("totalPrices", JSON.stringify(totalPrices));
+
+    // Toplam fiyatı sıfırla
+    setTotalPrice(0);
+
     alert("Sipariş başarıyla gönderildi.");
   };
 
@@ -48,6 +79,9 @@ const Cart = () => {
           ))}
         </tbody>
       </table>
+      <div>
+        <p>Toplam Fiyat: {totalPrice} TL</p> {/* Toplam fiyatı göster */}
+      </div>
       <button onClick={handleSendOrder}>Siparişi Gönder</button>
     </div>
   );

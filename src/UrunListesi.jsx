@@ -8,7 +8,7 @@ const UrunListesi = ({ urunler }) => {
       <thead>
         <tr>
           <th>Ürün ID</th>
-          <th>Kategori ID</th>
+          <th>Kategori</th>
           <th>Başlık</th>
           <th>Özellik</th>
           <th>İçerik</th>
@@ -30,7 +30,7 @@ const UrunListesi = ({ urunler }) => {
         {urunler.map((urun) => (
           <tr key={urun.urunID}>
             <td>{urun.urunID}</td>
-            <td>{urun.kategoriID}</td>
+            <td>{urun.kategoriBaslik}</td>
             <td>{urun.baslik}</td>
             <td>{urun.ozellik}</td>
             <td>{urun.icerik}</td>
@@ -58,7 +58,7 @@ const UrunListesiSayfasi = () => {
 
   useEffect(() => {
     axios
-      .get("https://localhost:44343/api/Urun")
+      .get("https://localhost:44343/api/Urun/witurun")
       .then((response) => {
         setUrunler(response.data);
       })

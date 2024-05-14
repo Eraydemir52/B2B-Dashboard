@@ -80,10 +80,12 @@ const Admin = () => {
   const toggleForm = () => {
     setIsOpen(!isOpen); // Formun açık/kapalı durumunu tersine çevir
     setIsOpenUrun();
+    setIsOpenSiparis(false);
   };
   const toggleFormUrun = () => {
     setIsOpenUrun(!isOpenUrun); // Ürün Formunun açık/kapalı durumunu tersine çevir
     setIsOpen(false); // Kategori Formunu kapat
+    setIsOpenSiparis(false);
   };
   const toggleFormSiparis = () => {
     // Sipariş Yönetimi formunu aç/kapat

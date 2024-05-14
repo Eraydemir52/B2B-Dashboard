@@ -23,7 +23,22 @@ const Payment = ({ cartItems }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (paymentInfo.cardNumber.length !== 16) {
+    const username = localStorage.getItem("username");
+    const totalPricesData = JSON.parse(localStorage.getItem("totalPrices"));
+
+    if (!username || !totalPricesData || !totalPricesData[username]) {
+      setErrorMessage("Kullanıcı bilgileri bulunamadı ");
+      return;
+    }
+
+    const userTotalPrices = parseFloat(totalPricesData[username]) || 0;
+    const paymentAmount = parseFloat(paymentInfo.amount);
+
+    if (paymentAmount > userTotalPrices || userTotalPrices === 0) {
+      setErrorMessage(
+        "Ödenecek tutar bulunmuyor veya ödeme tutarı toplam tutardan fazla."
+      );
+    } else if (paymentInfo.cardNumber.length !== 16) {
       setErrorMessage("Kart numarası 16 haneden oluşmalıdır.");
     } else if (!isValidExpiryDate(paymentInfo.expiryDate)) {
       setErrorMessage("Geçersiz son kullanma tarihi.");
@@ -36,6 +51,9 @@ const Payment = ({ cartItems }) => {
     ) {
       setErrorMessage("Geçersiz tutar.");
     } else {
+      const newUserTotalPrices = userTotalPrices - paymentAmount;
+      totalPricesData[username] = newUserTotalPrices;
+      localStorage.setItem("totalPrices", JSON.stringify(totalPricesData));
       console.log("Ödeme yapıldı:", paymentInfo);
       setErrorMessage("");
       setPaymentSuccess(true);

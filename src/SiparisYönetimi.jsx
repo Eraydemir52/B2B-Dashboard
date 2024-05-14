@@ -1,56 +1,80 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const SiparisYonetimi = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const filteredOrders = []; // Filtrelenmiş siparişleri tutacak bir dizi oluştur
+    const ordersData = JSON.parse(localStorage.getItem("orders")) || [];
+    setOrders(ordersData);
+  }, []);
 
-    // Local storage'daki tüm anahtarları al
-    const keys = Object.keys(localStorage);
-
-    // Anahtarları kontrol et ve 'cart_username' ile başlayanları işle
-    keys.forEach((key) => {
-      if (key.startsWith("cart_Eray52")) {
-        const cartOrders = JSON.parse(localStorage.getItem(key)); // Sepet siparişlerini al
-        cartOrders.forEach((order) => {
-          filteredOrders.push({ ...order, username: key.split("_")[2] }); // Kullanıcı adına göre siparişleri diziye ekle
-        });
-      } else if (key.startsWith("orders_")) {
-        const username = key.split("_")[1]; // Kullanıcı adını al
-        const userOrders = JSON.parse(localStorage.getItem(key)); // Kullanıcının siparişlerini al
-        userOrders.forEach((order) => {
-          filteredOrders.push({ ...order, username }); // Kullanıcı adına göre siparişleri diziye ekle
+  // Her kullanıcı için toplam fiyatı hesapla
+  const calculateTotalPriceByUsername = (username) => {
+    let totalPrice = 0;
+    orders.forEach((order) => {
+      if (order.username === username) {
+        order.cartItems.forEach((item) => {
+          totalPrice += item.quantity * item.price;
         });
       }
     });
+    return totalPrice;
+  };
 
-    setOrders(filteredOrders); // Filtrelenmiş siparişleri state'e ata
-  }, []);
+  useEffect(() => {
+    // Tüm kullanıcıların toplam fiyatlarını hesapla ve localStorage'a kaydet
+    const totalPrices = {};
+    orders.forEach((order) => {
+      const username = order.username;
+      if (!totalPrices.hasOwnProperty(username)) {
+        totalPrices[username] = calculateTotalPriceByUsername(username);
+      }
+    });
+    localStorage.setItem("totalPrices", JSON.stringify(totalPrices));
+  }, [orders]);
 
   return (
-    <div className="order-management-container">
-      <h2>Sipariş Yönetimi</h2>
+    <div>
+      <h1>Sipariş Yönetimi</h1>
       <table>
         <thead>
           <tr>
+            <th>Sipariş ID</th>
             <th>Ürün Adı</th>
-            <th>Adet</th>
+            <th>Miktar</th>
             <th>Fiyat</th>
+            <th>Toplam Fiyat</th>
+            <th>Sipariş Tarihi</th>
             <th>Kullanıcı Adı</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => (
-            <tr key={index}>
-              <td>{order.name}</td>
-              <td>{order.quantity}</td>
-              <td>{order.price}</td>
-              <td>{order.username}</td>
-            </tr>
-          ))}
+          {orders.map((order, index) =>
+            order.cartItems.map((item, itemIndex) => (
+              <tr key={index + "-" + itemIndex}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.quantity}</td>
+                <td>{item.price}</td>
+                <td>{item.quantity * item.price}</td>
+                <td>{order.orderDate}</td>
+                <td>{order.username}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
+
+      {/* Her kullanıcı için toplam fiyatları göster */}
+      <div>
+        {Array.from(new Set(orders.map((order) => order.username))).map(
+          (username, index) => (
+            <p key={index}>
+              {username}: {calculateTotalPriceByUsername(username)} TL
+            </p>
+          )
+        )}
+      </div>
     </div>
   );
 };
